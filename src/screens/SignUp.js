@@ -1,11 +1,11 @@
 import React, {Component} from 'react';
-import {View, Text, StyleSheet, Button, TextInput} from 'react-native';
+import {View, Text, StyleSheet, Button, TextInput, Keyboard} from 'react-native';
 import {connect} from 'react-redux';
-import {checkLogin, changeEmail, changePassword, signInAction} from './actions/AuthActions';
+import {checkLogin, changeEmail, changePassword, changeName, signUpAction} from '../actions/AuthActions';
 
-export class SignIn extends Component {
+export class SignUp extends Component {
     static navigationOptions = {
-        title: 'Login'
+        title: 'Cadastrar'
     }
 
     constructor(props) {
@@ -14,16 +14,24 @@ export class SignIn extends Component {
         console.disableYellowBox = true;
     }  
 
+    componentDidUpdate() {
+        if(this.props.status == 1) {
+            Keyboard.dismiss();
+            this.props.navigation.navigate('Conversas');
+        }
+    }
+
     render() {
         return (
             <View style={styles.container}>
-                <Text>Usuário logado: {this.props.uid}</Text>
+                <Text >Nome</Text>   
+               <TextInput style={styles.input} value={this.props.name} onChangeText={this.props.changeName}/>
                <Text >E-mail</Text>   
                <TextInput style={styles.input} value={this.props.email} onChangeText={this.props.changeEmail}/> 
                <Text >Senha</Text>   
                <TextInput secureTextEntry={true} style={styles.input} value={this.props.password} onChangeText={this.props.changePassword}/> 
-               <Button title="Entrar" onPress={() =>{
-                   this.props.signInAction(this.props.email, this.props.password);
+               <Button title="Cadastrar" onPress={() =>{
+                   this.props.signUpAction(this.props.name, this.props.email, this.props.password);
                }} />          
             </View>
         );
@@ -47,11 +55,12 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state) => {
     return {
-        uid: state.auth.uid,
+        name: state.auth.name,
         email: state.auth.email,
-        password: state.auth.password
+        password: state.auth.password,
+        status: state.auth.status
     };
 };
 
-const SignInConnect = connect(mapStateToProps, { checkLogin, changeEmail,changePassword, signInAction })(SignIn);
-export default SignInConnect;
+const SignUpConnect = connect(mapStateToProps, { checkLogin, changeEmail,changePassword, changeName, signUpAction })(SignUp);
+export default SignUpConnect;
